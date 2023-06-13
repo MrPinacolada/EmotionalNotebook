@@ -13,7 +13,11 @@
     "test": "jest"
   },
   "dependencies": {
+    "@tinymce/tinymce-vue": "^5.1.0",
+    "animate.css": "^4.1.1",
+    "moment": "^2.29.4",
     "pinia": "^2.0.36",
+    "tinymce": "^6.4.2",
     "vue": "^3.3.2",
     "vue-router": "^4.2.0"
   },
