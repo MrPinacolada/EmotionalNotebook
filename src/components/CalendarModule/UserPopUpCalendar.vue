@@ -7,20 +7,24 @@
       <editor
         v-model="UserWritting"
         api-key="v5n069t1i4u2b85xtio3jrmx4gktki4qys7iaksiafi1fzzq"
-        :init="tinymceConfig"
+        :init="store.$state.tinymceConfig(400)"
         :initial-value="UserWritting"
         tag-name="div"
       />
     </div>
     <div class="rigtbar-calendar">
       <div @click="store.$state.UserEmotianalCalendarOpened = true" class="circle">
-        <div class="section"></div>
-        <div class="section"></div>
-        <div class="section"></div>
+        <div class="circleSection"></div>
+        <div class="circleSection"></div>
+        <div class="circleSection"></div>
         <div class="line"></div>
       </div>
-      <EmotionalCircleCalendar />
+      <div class="todo-list-calendar"></div>
     </div>
+    <EmotionalCircleCalendar
+      @update-color="updateUsersPopUp"
+      v-if="store.$state.UserEmotianalCalendarOpened"
+    />
     <div class="photoswiper-calendar"></div>
   </div>
 </template>
@@ -34,18 +38,22 @@ import EmotionalCircleCalendar from './EmotionalCircleCalendar.vue'
 let store = Store()
 const UserWritting = ref('fuck')
 let targetClosePopUp = ref(null)
-let tinymceConfig = {
-  toolbar_location: 'bottom',
-  toolbar: 'bold | italic | underline | emoticons',
-  disabled: false,
-  plugins: 'emoticons',
-  menubar: false,
-  statusbar: false
-}
-
 outsideDetector(targetClosePopUp, () => {
   store.$state.UserPopUpCalendarOpened = !store.$state.UserPopUpCalendarOpened
+  store.$state.UserEmotianalCalendarOpened = !store.$state.UserEmotianalCalendarOpened
 })
+let updateUsersPopUp = (event: any) => {
+  let circle = document.getElementsByClassName('circleSection')
+  for (let i = 0; i < circle.length; i++) {
+    let circleSection = circle[i] as HTMLElement
+    if (!event[i]) {
+      let transparent = 'rgb(0,0,0,0)'
+      circleSection.style.backgroundColor = transparent
+      return
+    }
+    circleSection.style.backgroundColor = event[i].color
+  }
+}
 </script>
 
 <style scoped>
@@ -53,7 +61,7 @@ outsideDetector(targetClosePopUp, () => {
   padding: 10px;
   width: 70%;
   height: 74%;
-  overflow-y: hidden;
+  overflow: hidden;
   border-radius: 20px;
   background-color: antiquewhite;
   display: grid;
@@ -75,7 +83,7 @@ outsideDetector(targetClosePopUp, () => {
   height: 100%;
   border: 1px solid red;
   display: grid;
-  align-items: self-end;
+  align-items: self-start;
   justify-items: center;
 }
 .circle {
@@ -84,7 +92,7 @@ outsideDetector(targetClosePopUp, () => {
   height: 100px;
   border-radius: 50%;
   overflow: hidden;
-  margin-bottom: 10px;
+  margin-top: 10px;
   border: 1px rgb(153, 137, 137) solid;
   transition: transform 0.3s ease;
   cursor: pointer;
@@ -93,7 +101,7 @@ outsideDetector(targetClosePopUp, () => {
   transform: scale(1.2);
 }
 
-.section {
+.circleSection {
   position: absolute;
   top: 0;
   left: 0;
@@ -101,25 +109,25 @@ outsideDetector(targetClosePopUp, () => {
   height: 100%;
 }
 
-.section:nth-child(1) {
+.circleSection:nth-child(1) {
   /* background-color: red; */
   transform: rotate(0deg);
   clip-path: polygon(50% 50%, 150% 100%, -50% 100%);
 }
 
-.section:nth-child(2) {
+.circleSection:nth-child(2) {
   /* background-color: green; */
   transform: rotate(135deg);
   clip-path: polygon(50% 50%, 200% 100%, 0% 100%);
 }
 
-.section:nth-child(3) {
+.circleSection:nth-child(3) {
   /* background-color: blue; */
   transform: rotate(225deg);
 
   clip-path: polygon(50% 50%, 100% 100%, -100% 100%);
 }
-.section:nth-child(3):hover {
+.circleSection:nth-child(3):hover {
 }
 
 .line {
@@ -154,5 +162,7 @@ outsideDetector(targetClosePopUp, () => {
   left: 72%;
   rotate: 116.7deg;
   width: 100%;
+}
+.todo-list-calendar {
 }
 </style>
