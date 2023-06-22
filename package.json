@@ -10,7 +10,7 @@
     "type-check": "vue-tsc --noEmit -p tsconfig.app.json --composite false",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "format": "prettier --write src/",
-    "test": "vitest --coverage --environment jsdom --root src/"
+    "test": "vitest --coverage --environment jsdom"
   },
   "dependencies": {
     "@tinymce/tinymce-vue": "^5.1.0",

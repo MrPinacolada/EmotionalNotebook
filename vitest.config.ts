@@ -3,7 +3,8 @@ import { fileURLToPath, URL } from 'node:url'
 export default {
   test:{
     coverage:{
-      reporter:['text','html']
+      reporter:['text','html'],
+      reportsDirectory: 'src/vitest'
     }
   },
     plugins: [vue()],
