@@ -4,6 +4,7 @@ import LeftBar from '@/components/LeftBarModule/MajorLeftBarComponent.vue'
 import HeaderModule from '@/components/HeaderModule/MajorHeaderComponent.vue'
 import 'animate.css'
 import { Store } from '@/piniadb/index'
+
 let store = Store()
 </script>
 
@@ -30,7 +31,13 @@ body {
   border: none;
   text-decoration: none;
 }
-p,h1,h2,h3,a,span,nav{
+p,
+h1,
+h2,
+h3,
+a,
+span,
+nav {
   margin: 0;
 }
 </style>

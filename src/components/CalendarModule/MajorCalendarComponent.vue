@@ -17,7 +17,7 @@
       <div class="arrow right" @click="scrollOptions(1)">&#8250;</div>
     </div>
   </div>
-  <div class="calendar-container">
+  <div ref="calendarContainer" class="calendar-container">
     <section
       class="grid-box"
       @click="store.$state.UserPopUpCalendarOpened = !store.$state.UserPopUpCalendarOpened"
@@ -29,7 +29,7 @@
       </div>
     </section>
     <div class="popup" v-if="store.$state.UserPopUpCalendarOpened">
-      <UserPopUpCalendar  />
+      <DayPopUp />
     </div>
   </div>
 </template>
@@ -39,6 +39,7 @@ import { ref } from 'vue'
 import moment from 'moment'
 import { Store } from '@/piniadb/index'
 import UserPopUpCalendar from './UserPopUpCalendar.vue'
+import DayPopUp from './DayPopUp.vue'
 let store = Store()
 let currentMounth = ref({ data: moment().format('MMMM'), render: moment().format('MMMM') })
 let selectMounths = ref(moment.localeData().months())
@@ -76,7 +77,7 @@ let scrollOptions = (direction: number) => {
   width: 150px;
   height: 40px;
   border-radius: 20px;
-  background-color: #ccc;
+  background-color: #b5dbb8;
   position: absolute;
   overflow: hidden;
   margin-top: 30px;
@@ -137,7 +138,7 @@ let scrollOptions = (direction: number) => {
 }
 
 .calendar-container {
-  background: linear-gradient(270deg, #0ed29f, #0e8dd2);
+  /* background: linear-gradient(270deg, #0ed29f, #0e8dd2); */
   background-size: 400% 400%;
   width: 80%;
   height: 80%;
@@ -192,7 +193,8 @@ let scrollOptions = (direction: number) => {
   align-items: center;
   justify-items: center;
   border-radius: 10px;
-  background-color: rgb(241, 216, 183);
+  background-color: #f5fbff;
+  box-shadow: 0 0 10px 0px rgba(0, 0, 0, 0.35);
   transition: transform 0.3s ease;
   position: relative;
   cursor: pointer;
@@ -215,7 +217,7 @@ let scrollOptions = (direction: number) => {
 
 .day {
   font-size: 6em;
-  opacity: 0.3;
+  opacity: 0.5;
   margin: 0;
   position: absolute;
   cursor: pointer;
@@ -247,6 +249,7 @@ let scrollOptions = (direction: number) => {
   display: block;
   height: 1px;
   background-color: #000;
+  opacity: 0.5;
   width: 100%;
 }
 .popup {
@@ -255,7 +258,7 @@ let scrollOptions = (direction: number) => {
   width: 100%;
   height: 100%;
   display: grid;
-  align-items:start;
+  align-items: start;
   justify-items: center;
 }
 </style>

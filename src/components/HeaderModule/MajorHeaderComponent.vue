@@ -19,7 +19,8 @@ let store = Store()
 
 <style scoped>
 .headercontainer {
-  background-color: rgb(229, 229, 240);
+  background-color:#b5dbb8;
+  box-shadow: 0 12px 20px -12px rgba(0, 0, 0, 0.35);
   position: relative;
   display: flex;
   align-items: center;

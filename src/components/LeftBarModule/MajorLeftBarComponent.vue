@@ -38,7 +38,6 @@ let CloseTheBar = () => {
   background-color: rgb(229, 229, 240);
   border-radius: 20px;
   z-index: 999;
-
 }
 #close-butt-left-bar {
   position: absolute;

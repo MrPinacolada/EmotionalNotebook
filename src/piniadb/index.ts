@@ -5,7 +5,7 @@ export const Store = defineStore('Articles', {
       LeftBarOpener: false,
       UserPopUpCalendarOpened: false,
       UserEmotianalCalendarOpened: false,
-      UserEmotianalCalendarOpenedFORK:false,
+      UserEmotianalCalendarOpenedFORK: false,
       tinymceConfig: (height: number) => {
         return {
           height: height,

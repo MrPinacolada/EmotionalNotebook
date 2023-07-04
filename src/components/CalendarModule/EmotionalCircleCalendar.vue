@@ -35,13 +35,7 @@
     </section>
     <br />
     <section>
-      <editor
-        v-model="UserWritting"
-        api-key="v5n069t1i4u2b85xtio3jrmx4gktki4qys7iaksiafi1fzzq"
-        :init="store.$state.tinymceConfig(200)"
-        :initial-value="UserWritting"
-        tag-name="div"
-      />
+      <Editor v-model="UserWritting" editorStyle="height: 220px;" />
     </section>
     <br />
     <button type="submit">Save</button>
@@ -50,9 +44,12 @@
 
 <script setup lang="ts">
 import { onMounted, ref, watch, onBeforeMount, type Ref } from 'vue'
-import editor from '@tinymce/tinymce-vue'
+// import editor from '@tinymce/tinymce-vue'
+import Editor from 'primevue/editor';
+
 import outsideDetector from '@/backgroundFunc/outsideDetector'
 import { Store } from '@/piniadb/index'
+import Button from 'primevue/button';
 const emit = defineEmits(['updateColor'])
 interface Feeling {
   id: number
