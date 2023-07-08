@@ -1,95 +1,78 @@
 <template>
-  <div
-    class="round-backdrop animate__animated animate__fadeIn"
-    v-if="store.$state.UserEmotianalCalendarOpenedFORK"
-  ></div>
-  <form
-    @submit.prevent="SaveFeelings"
-    ref="targetClosePopUp"
-    v-if="store.$state.UserEmotianalCalendarOpenedFORK"
-    class="emotional-popup-container animate__animated animate__flipInX"
+  <Dialog
+    :style="{ width: '40%', height: '70%' }"
+    v-model:visible="store.$state.UserEmotianalCalendarOpened"
+    modal
+    class="animate__animated animate__flipInY"
+    :header="ChangeableLabel"
   >
-    <label for="">{{ ChangeableLabel }}</label>
-    <section>
-      <div class="selectedFills">
-        <span
-          @click="addRemoveFeeling(item, false)"
-          class="feeling-calendar"
-          :style="{ backgroundColor: item.color }"
-          v-for="(item, index) in usersFeelings"
-          :key="index"
-          >{{ item.fl }}</span
-        >
-      </div>
-    </section>
-    <br />
-    <section class="feelings-container-span">
-      <span
-        class="feeling-calendar"
-        @click="addRemoveFeeling(item, true)"
-        :style="{ backgroundColor: item.color }"
-        v-for="(item, index) in feelingsCalendar"
-        :key="index"
-        >{{ item.fl }}</span
-      >
-    </section>
-    <br />
-    <section>
-      <Editor v-model="UserWritting" editorStyle="height: 220px;" />
-    </section>
-    <br />
-    <button type="submit">Save</button>
-  </form>
+    <form @submit.prevent="SaveFeelings" class="emotional-popup-container">
+      <section class="feelings-container-span">
+        <div v-for="item in store.$state.Circle_F_array">
+          <MultiSelect
+            v-model="item.selectedFeelings"
+            :options="item.list"
+            :optionLabel="(option) => option.fs_name"
+            :placeholder="'Я чувствую...'"
+            :max-selected-labels="1"
+            :selectionLimit="1"
+            :style="{ background: item.maj_color, color: 'rgb(255 255 255 / 91%)' }"
+          />
+        </div>
+      </section>
+      <br />
+      <section>
+        <Editor v-model="UserWritting" editorStyle="height: 120px;" />
+      </section>
+      <br />
+      <Button type="submit">Save</Button>
+    </form>
+  </Dialog>
 </template>
-
 <script setup lang="ts">
 import { onMounted, ref, watch, onBeforeMount, type Ref } from 'vue'
-// import editor from '@tinymce/tinymce-vue'
-import Editor from 'primevue/editor';
-
-import outsideDetector from '@/backgroundFunc/outsideDetector'
+import Editor from 'primevue/editor'
+import Dialog from 'primevue/dialog'
 import { Store } from '@/piniadb/index'
-import Button from 'primevue/button';
+import Button from 'primevue/button'
+import MultiSelect from 'primevue/multiselect'
+import { useToast } from 'primevue/usetoast'
+
 const emit = defineEmits(['updateColor'])
+const toast = useToast()
+const store = Store()
+const UserWritting = ref('Hi')
+
 interface Feeling {
-  id: number
-  fl: string
+  fs_name: string
   color: string
+  selectedFeelings: Feeling[]
 }
-let store = Store()
-const UserWritting = ref('fuck')
-const usersFeelings = ref<Feeling[]>([])
-let targetClosePopUp = ref(null)
-let ChangeableLabel = ref('What do you feel now?')
-let feelingsCalendar = ref([
-  { id: 0, fl: 'Anger', color: 'rgb(210, 205, 205)' },
-  { id: 1, fl: 'Fear', color: 'rgb(210, 205, 205)' },
-  { id: 2, fl: 'Love', color: 'rgb(216, 205, 205)' },
-  { id: 3, fl: 'Anxiety', color: 'rgb(200, 205, 205)' },
-  { id: 4, fl: 'Happy', color: 'rgb(190, 205, 205)' },
-  { id: 5, fl: 'bla', color: 'rgb(210, 205, 205)' },
-  { id: 6, fl: 'bla', color: 'rgb(10, 10, 205)' },
-  { id: 7, fl: 'bla', color: 'rgb(110, 25, 205)' },
-  { id: 8, fl: 'bla', color: 'rgb(109, 20, 205)' }
-])
-let addRemoveFeeling = (item: { id: number; fl: string; color: string }, state: boolean) => {
-  if (usersFeelings.value.length == 3 && state) {
-    ChangeableLabel.value = 'You can add only 3 feelings...'
-    return
-  }
-  if (state) {
-    usersFeelings.value.push(item)
-    feelingsCalendar.value = feelingsCalendar.value.filter((obj) => obj.id !== item.id)
-  } else {
-    feelingsCalendar.value.push(item)
-    usersFeelings.value = usersFeelings.value.filter((obj) => obj.id !== item.id)
-  }
-}
-outsideDetector(targetClosePopUp, () => {
-  store.$state.UserEmotianalCalendarOpenedFORK = !store.$state.UserEmotianalCalendarOpenedFORK
-})
-let SaveFeelings = () => {
-  emit('updateColor', usersFeelings.value)
+
+let ChangeableLabel = ref('Что ты сейчас испытываешь?')
+
+const SaveFeelings = () => {
+  const selectedFeelings = store.$state.Circle_F_array.reduce(
+    (selected: Array<{ fs_name: string; color: string }>, item: Feeling) => {
+      if (item.selectedFeelings && item.selectedFeelings.length > 0) {
+        const selectedFeeling = item.selectedFeelings[0]
+        selected.push({
+          fs_name: selectedFeeling.fs_name,
+          color: selectedFeeling.color
+        })
+      }
+      return selected
+    },
+    []
+  )
+  toast.add({
+    severity: 'success',
+    summary: 'Saved!',
+    detail: 'Чувства добавлены!',
+    life: 1000
+  })
+
+  emit('updateColor', selectedFeelings)
 }
 </script>
 
@@ -102,14 +85,14 @@ let SaveFeelings = () => {
   z-index: 2;
 }
 .emotional-popup-container {
-  position: absolute;
+  /* position: absolute; */
   align-self: center;
   justify-self: center;
   z-index: 3;
   padding: 10px;
   margin: auto;
-  width: 60%;
-  height: fit-content;
+  /* width: 100%; */
+  /* height: fit-content; */
   border-radius: 15px;
   background-color: whitesmoke;
   overflow: hidden;
@@ -132,8 +115,7 @@ label {
   display: inline-block;
   font-size: 0.9em;
 }
-input,
-select {
+input {
   display: block;
   border: none;
   width: 100%;
@@ -166,5 +148,12 @@ select:focus {
   display: flex;
   gap: 5px;
   flex-wrap: wrap;
+}
+.p-multiselect {
+  border-radius: 25px;
+  /* background-color: rgb(113, 54, 54); */
+}
+.p-multiselect-chip .p-multiselect-token {
+  background-color: red !important;
 }
 </style>

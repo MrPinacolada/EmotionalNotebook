@@ -22,10 +22,18 @@
       class="grid-box"
       @click="store.$state.UserPopUpCalendarOpened = !store.$state.UserPopUpCalendarOpened"
     >
-      <div class="grid-item" v-for="(item, index) in getCalendarDays()" :key="index">
+      <div
+        class="grid-item"
+        :class="{
+          currentDayShadow:
+            moment().format('LL') == currentMounth.render + ' ' + item + ', ' + currentYear
+        }"
+        v-for="(item, index) in getCalendarDays()"
+        :key="index"
+      >
         <p class="month">{{ currentMounth.render || currentMounth.data }}</p>
         <p class="day">{{ item }}</p>
-        <div class="achives-calendar"><p>fuck</p></div>
+        <div class="achives-calendar"><p>none</p></div>
       </div>
     </section>
     <div class="popup" v-if="store.$state.UserPopUpCalendarOpened">
@@ -44,6 +52,7 @@ let store = Store()
 let currentMounth = ref({ data: moment().format('MMMM'), render: moment().format('MMMM') })
 let selectMounths = ref(moment.localeData().months())
 let optionOffset = ref(0)
+let currentYear = '2023'
 let getCalendarDays = () => {
   let daysArr = []
   let daysInMonth = moment(
@@ -199,7 +208,10 @@ let scrollOptions = (direction: number) => {
   position: relative;
   cursor: pointer;
 }
+.currentDayShadow{
+  box-shadow: 0 0 10px 0px rgba(190, 13, 13, 0.60);
 
+}
 .grid-item:hover {
   transform: scale(1.15);
 }

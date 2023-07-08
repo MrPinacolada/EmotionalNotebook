@@ -1,56 +1,89 @@
 <template>
-  <div class="daypopup-wrapper animate__animated animate__fadeIn"></div>
-  <div
-    ref="targetClosePopUp"
-    class="user-popup-container-calendar animate__animated animate__backInUp"
-  >
-    <div class="notebook-caendar">
-      <Editor v-model="UserWritting" editorStyle="height: 320px;" />
-    </div>
-    <div class="rigtbar-calendar">
-      <div @click="store.$state.UserEmotianalCalendarOpened = true" class="circle">
-        <div class="circleSection"></div>
-        <div class="circleSection"></div>
-        <div class="circleSection"></div>
-        <div class="line"></div>
+  <Dialog :style="{ height: '100%' }" v-model:visible="store.$state.UserPopUpCalendarOpened" modal>
+    <div class="user-popup-container-calendar">
+      <div class="notebook-caendar">
+        <Editor v-model="UserWritting" editorStyle="height: 320px;" />
       </div>
-      <div class="todo-list-calendar"></div>
+      <div class="rigtbar-calendar">
+        <!-- <div @click="store.$state.UserEmotianalCalendarOpened = true" class="circle">
+          <div class="circleSection"></div>
+          <div class="circleSection"></div>
+          <div class="circleSection"></div>
+          <div class="line"></div>
+        </div> -->
+        <Chart
+          type="pie"
+          :data="chartData"
+          :options="chartOptions"
+          :pt="{
+            root: { style: ' width: 150px; height: 150px;' },
+            canvas: { style: 'aspect-ratio: 1; width: 150px; height: 150px;' }
+          }"
+          @click="store.$state.UserEmotianalCalendarOpened = true"
+        />
+        <div class="todo-list-calendar"></div>
+      </div>
+      <EmotionalCircleCalendar
+        @update-color="updateUsersPopUp"
+        v-if="store.$state.UserEmotianalCalendarOpened"
+      />
+      <div class="photoswiper-calendar"></div>
     </div>
-    <EmotionalCircleCalendar
-      @update-color="updateUsersPopUp"
-      v-if="store.$state.UserEmotianalCalendarOpened"
-    />
-    <div class="photoswiper-calendar"></div>
-  </div>
+  </Dialog>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref, watch, onBeforeMount } from 'vue'
-// import editor from '@tinymce/tinymce-vue'
 import { Store } from '@/piniadb/index'
-import outsideDetector from '@/backgroundFunc/outsideDetector'
 import EmotionalCircleCalendar from './EmotionalCircleCalendar.vue'
-import Editor from 'primevue/editor'
-let store = Store()
 
+const store = Store()
 const UserWritting = ref('fuck')
-let targetClosePopUp = ref(null)
-outsideDetector(targetClosePopUp, () => {
-  store.$state.UserPopUpCalendarOpened = !store.$state.UserPopUpCalendarOpened
-  store.$state.UserEmotianalCalendarOpened = !store.$state.UserEmotianalCalendarOpened
-})
-let updateUsersPopUp = (event: any) => {
-  let circle = document.getElementsByClassName('circleSection')
-  for (let i = 0; i < circle.length; i++) {
-    let circleSection = circle[i] as HTMLElement
-    if (!event[i]) {
-      let transparent = 'rgb(0,0,0,0)'
-      circleSection.style.backgroundColor = transparent
-      return
-    }
-    circleSection.style.backgroundColor = event[i].color
+
+const updateUsersPopUp = (event: any) => {
+  
+}
+
+const chartData = ref()
+const chartOptions = ref()
+
+const setChartData = () => {
+  const documentStyle = getComputedStyle(document.documentElement)
+  return {
+    datasets: [
+      {
+        data: [30, 30, 30, 30, 30, 30],
+        backgroundColor: [
+          documentStyle.getPropertyValue('#ff00111'),
+          documentStyle.getPropertyValue('--green-500'),
+          documentStyle.getPropertyValue('--yellow-500'),
+          documentStyle.getPropertyValue('--bluegray-500'),
+          documentStyle.getPropertyValue('--blue-500'),
+          documentStyle.getPropertyValue('--blue-500')
+          // label: 'My dataset'
+        ]
+      }
+    ]
+    // labels: ['Red', 'Green', 'Yellow', 'Grey', 'Blue']
   }
 }
+const setChartOptions = () => {
+  plugins: {
+    legend: {
+      labels: {
+        usePointStyle: false
+      }
+    }
+  }
+}
+onBeforeMount(() => {
+  store.get_all_emotions_for_circle()
+})
+
+onMounted(() => {
+  chartData.value = setChartData()
+  chartOptions.value = setChartOptions()
+})
 </script>
 
 <style scoped>
@@ -63,18 +96,24 @@ let updateUsersPopUp = (event: any) => {
   background-color: rgb(0, 0, 0, 0.3);
 }
 .user-popup-container-calendar {
-  padding: 10px;
-  width: 70%;
-  height: 74%;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
   border-radius: 20px;
-  background-color: #f5fbff;
   display: grid;
   grid-template-columns: 1fr 0.3fr;
   grid-template-rows: 1fr 0.5fr;
-  position: absolute;
   margin: auto;
-  top: 5%;
+  overflow: hidden;
+  position: relative;
+}
+.p-dialog {
+  background-color: #119ffd;
+  width: fit-content;
+  height: fit-content;
+}
+:deep(.p-dialog-content) {
+  overflow: hidden;
 }
 .notebook-caendar {
   width: 100%;
@@ -175,4 +214,5 @@ let updateUsersPopUp = (event: any) => {
 }
 .todo-list-calendar {
 }
+
 </style>

@@ -3,9 +3,6 @@ import { RouterView } from 'vue-router'
 import LeftBar from '@/components/LeftBarModule/MajorLeftBarComponent.vue'
 import HeaderModule from '@/components/HeaderModule/MajorHeaderComponent.vue'
 import 'animate.css'
-import { Store } from '@/piniadb/index'
-
-let store = Store()
 </script>
 
 <template>
@@ -14,6 +11,7 @@ let store = Store()
   </header>
   <LeftBar />
   <main>
+    <Toast position="top-right" />
     <RouterView />
   </main>
 </template>
